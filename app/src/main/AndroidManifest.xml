@@ -28,6 +28,8 @@
         </activity>
         <activity android:name="de.plinzen.android.rttmanager.ranging.SelectedActivity">
         </activity>
+        <activity android:name="de.plinzen.android.rttmanager.ranging.LaterationActivity">
+        </activity>
     </application>
 
 </manifest>

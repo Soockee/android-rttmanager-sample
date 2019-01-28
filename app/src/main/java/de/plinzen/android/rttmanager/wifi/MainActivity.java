@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,6 +31,7 @@ import butterknife.ButterKnife;
 import de.plinzen.android.rttmanager.BuildConfig;
 import de.plinzen.android.rttmanager.R;
 import de.plinzen.android.rttmanager.permission.LocationPermissionController;
+import de.plinzen.android.rttmanager.ranging.LaterationActivity;
 import de.plinzen.android.rttmanager.ranging.SelectedActivity;
 import timber.log.Timber;
 
@@ -40,9 +42,20 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             final List<ScanResult> wifiNetworks = wifiManager.getScanResults();
+            final List<String> duplicates = new ArrayList<>(wifiNetworks.size());
+            for (ScanResult result : wifiNetworks) {
+                if (!duplicates.contains(result.BSSID)) {
+                    duplicates.add(result.BSSID);
+                    if (result.is80211mcResponder()) {
+                        listOfFTMAccessPoints.add(result);
+                        System.out.println("AP: "+result.BSSID);
+                    }
+                }
+            }
             Timber.d("received scan result. %s, size: %d", intent.toString(), wifiNetworks.size());
             lblSearchHint.setVisibility(View.GONE);
             wifiNetworkAdapter.setWifiNetworks(wifiManager.getScanResults());
+            lat.show();
         }
     }
 
@@ -58,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
     CoordinatorLayout coordinatorLayout;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.lat)
+    FloatingActionButton lat;
     @BindView(R.id.lblSearchHint)
     TextView lblSearchHint;
     @BindView(R.id.listWifiNetworks)
@@ -73,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private WifiManager wifiManager;
     private WifiNetworkAdapter wifiNetworkAdapter;
     private ScanWifiNetworkReceiver wifiNetworkReceiver;
+    private ArrayList<ScanResult> listOfFTMAccessPoints = new ArrayList<>();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         permissionController = new LocationPermissionController();
         fab.setOnClickListener(view -> startWifiScan());
+        lat.setOnClickListener(view -> startLateration());
+        lat.hide();
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiNetworkReceiver = new ScanWifiNetworkReceiver();
         rttManager = (WifiRttManager) getSystemService(Context.WIFI_RTT_RANGING_SERVICE);
@@ -173,5 +191,9 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(wifiNetworkReceiver, filter);
         final boolean successful = wifiManager.startScan();
         Timber.d("Started scan successful: %b", successful);
+    }
+
+    private void startLateration() {
+        startActivity(LaterationActivity.builtIntent(listOfFTMAccessPoints, getApplicationContext()));
     }
 }

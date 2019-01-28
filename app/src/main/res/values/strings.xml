@@ -13,6 +13,7 @@
     <string name="version_info_app">Version App: %1$s (%2$d)</string>
     <string name="rtt_available">RTT is available: %1$b</string>
     <string name="selected_activity_title">Wifi %1$s</string>
+    <string name="lateration_activity_title">MultiRanging</string>
 
     <!-- Button Text -->
     <string name="stop_ranging">Stop Ranging</string>
@@ -20,5 +21,7 @@
 
     <!-- log String -->
     <string name="log">%1$d RSSI: %2$d Distance: %3$d mm\n%4$s</string>
+    <string name="log2">AP: %s - Distance: %d cm\n%3$s</string>
+    <string name="log3">%s,%s,%s,%d,%d,%d\n</string>
 
 </resources>

@@ -11,18 +11,9 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        development {
-            storeFile file("../development.jks")
-            storePassword "development"
-            keyAlias "development"
-            keyPassword "development"
-        }
-    }
 
     buildTypes {
         debug {
-            signingConfig signingConfigs.development
         }
 
         release {

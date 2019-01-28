@@ -27,8 +27,7 @@ class RttRangingManager {
     }
 
 
-    public Single<List<RangingResult>> startRanging(
-            @NonNull final ScanResult scanResult) {
+    public Single<List<RangingResult>> startRanging(@NonNull final ScanResult scanResult) {
         return Single.create(emitter -> {
             final RangingRequest request = new RangingRequest.Builder()
                     .addAccessPoint(scanResult)
